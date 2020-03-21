@@ -1,14 +1,7 @@
-BOARD_WIDTH = 3
-WIN = 1
-LOSE = -1
-TIE = 0
+# board module defines the methods for interacting and accessing the game_board
 
-game_board = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
-is_won = False
-is_tie = False
-moves_remaining = BOARD_WIDTH ** 2
 
-# print_board(board) converts the board [board] into a readable message in the
+# print_board(board) converts the list, list [board] into a readable message in the
 # console
 
 
@@ -19,7 +12,7 @@ def print_board(board):
         print()
 
 # is_empty_cell(board, pos) is true if the tuple [pos] is an empty cell of
-# board [board], false otherwise.
+# list, list [board], false otherwise.
 
 
 def is_empty_cell(board, pos):
@@ -28,7 +21,7 @@ def is_empty_cell(board, pos):
     return res
 
 # is_valid(board, pos) is true if the given tuple [pos] is a valid position of
-# the board [board], false otherwise.
+# the list, list [board], false otherwise.
 
 
 def is_valid(board, pos):
@@ -52,15 +45,20 @@ def get_input(board):
         return get_input(board)
     return pos
 
-# place_piece(board, move, is_player1) fills in cell at location [move] on board
-# [board] with the correct piece by either player1 or player2, specified by
-# [is_player1]
+# place_piece(board, move, is_player1) fills in cell at location [move] on
+# list, list [board] with the correct piece by either player1 or player2,
+# specified by [is_player1]
 
 
 def place_piece(board, move, is_player1):
     piece = 'X' if is_player1 else 'O'
     r, c = move[0], move[1]
     board[r][c] = piece
+
+
+def remove_piece(board, move):
+    r, c = move[0], move[1]
+    board[r][c] = ' '
 
 # TODO: Document check_win
 
@@ -78,33 +76,11 @@ def check_win(board, move, is_player1):
         return True
     return False
 
-# TODO: Document game_loop
 
-
-def game_loop(is_player1, board):
-    global is_won, is_tie, moves_remaining
-    while not (is_won or is_tie):
-        print_board(board)
-        pos = get_input(board)
-        place_piece(board, pos, is_player1)
-        moves_remaining = moves_remaining - 1
-        is_won = check_win(board, pos, is_player1)
-        is_tie = (not is_won) and (moves_remaining == 0)
-        if (is_won or is_tie):
-            break
-        is_player1 = not is_player1
-    print_board(board)
-    if is_tie:
-        print("TIE!")
-    else:
-        player = 1 if is_player1 else 2
-        print("Player %d is the winner!" % player)
-
-
-def main():
-    is_p1 = True
-    game_loop(is_p1, game_board)
-
-
-if __name__ == "__main__":
-    main()
+def possible_moves(board):
+    res = []
+    for r in range(3):
+        for c in range(3):
+            if is_empty_cell(board, (r, c)):
+                res.append((r, c))
+    return res
