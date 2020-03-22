@@ -38,7 +38,7 @@ def max_move(board, moves_left):
             min_tple = min_move(board, moves_left - 1)
             if min_tple[0] > max_val:
                 max_val = min_tple[0]
-                max_mv = min_tple[1]
+                max_mv = mv
         bd.remove_piece(board, mv)
     return (max_val, max_mv)
 
@@ -46,8 +46,9 @@ def max_move(board, moves_left):
 # min_move(board, moves_left) is a tuple [(a,b)] where [a] is > 0 if the game is
 # winnable by player 2, 0 if tie, and < 0 otherwise. [b] is the move that will
 # lead to that result
-# P2 CURRENTLY sometimes WINS
+# P2 CURRENTLY sometimes LOSES
 def min_move(board, moves_left):
+    print("Minimizer")
     min_val = sys.maxsize
     min_mv = None
     next_moves = bd.possible_moves(board)
@@ -73,7 +74,7 @@ def min_move(board, moves_left):
             max_tple = max_move(board, moves_left - 1)
             if max_tple[0] < min_val:
                 min_val = max_tple[0]
-                min_mv = max_tple[1]
+                min_mv = mv
         bd.remove_piece(board, mv)
         # print("FOR DEBUGGING: min_val: %d" % min_val)
         # bd.print_board(board)
