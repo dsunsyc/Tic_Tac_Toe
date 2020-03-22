@@ -20,6 +20,8 @@ def max_move(board, moves_left):
     next_moves = bd.possible_moves(board)
     # need to consider the no possible move situation (full board state) CHECK FOR NONE
     for mv in next_moves:
+        bd.place_piece(board, mv, True)
+        # bd.print_board(board)
       # HAVE TO CHECK FOR LOSSES TOO
         if bd.check_win(board, mv, True):
             if X_WIN > max_val:
@@ -30,40 +32,46 @@ def max_move(board, moves_left):
                 max_val = X_LOSE
                 max_mv = mv
         else:
-            bd.place_piece(board, mv, True)
             min_tple = min_move(board, moves_left - 1)
-            bd.remove_piece(board, mv)
             if min_tple[0] > max_val:
                 max_val = min_tple[0]
                 max_mv = min_tple[1]
+        bd.remove_piece(board, mv)
     return (max_val, max_mv)
 
 
 # min_move(board, moves_left) is a tuple [(a,b)] where [a] is > 0 if the game is
 # winnable by player 2, 0 if tie, and < 0 otherwise. [b] is the move that will
 # lead to that result
+# P2 CURRENTLY NEVER WINS
 def min_move(board, moves_left):
     min_val = sys.maxsize
     min_mv = None
     next_moves = bd.possible_moves(board)
+    # print("FOR DEBUGGING: min_val: %d" % min_val)
     for mv in next_moves:
       # If next move results in P1's loss, check to update the values
+        bd.place_piece(board, mv, False)
+        # bd.print_board(board)
         if bd.check_win(board, mv, False):
+            # print("I made it to p2 winning")
             if X_LOSE < min_val:
                 min_val = X_LOSE
                 min_mv = mv
         # If next move results in P1's win, check, to update the values
         elif bd.check_win(board, mv, True):
+            # print("I made it to p1 winning")
             if X_WIN < min_val:
                 min_val = X_WIN
                 min_mv = mv
         else:
-            bd.place_piece(board, mv, False)
+            # print("I made it to the else")
             max_tple = max_move(board, moves_left - 1)
-            bd.remove_piece(board, mv)
             if max_tple[0] < min_val:
                 min_val = max_tple[0]
                 min_mv = max_tple[1]
+        bd.remove_piece(board, mv)
+        # bd.print_board(board)
     return (min_val, min_mv)
 
 # for all valid moves, check the minimax value. set the best move pointer to be
@@ -71,6 +79,8 @@ def min_move(board, moves_left):
 
 
 def best_move(board, is_max, moves_left):
+    # if not is_max:
+    #     # print("Is minimizer")
     res = max_move(board, moves_left) if is_max else min_move(
         board, moves_left)
     return res[1]
