@@ -10,12 +10,20 @@ moves_remaining = BOARD_WIDTH ** 2
 
 # TODO: Document game_loop
 
+# haven't really accounted for edge cases
+
 
 def game_loop(is_player1, board):
     global is_won, is_tie, moves_remaining
     while not (is_won or is_tie):
-        bd.print_board(board)
-        pos = bd.get_input(board)
+        print("Moves left: %d" % moves_remaining)
+        pos = None
+        if not is_player1:
+            pos = minimax.best_move(board, False, moves_remaining)
+        else:
+            bd.print_board(board)
+            pos = bd.get_input(board)
+        print("Gotten past minimax")
         bd.place_piece(board, pos, is_player1)
         moves_remaining = moves_remaining - 1
         is_won = bd.check_win(board, pos, is_player1)
