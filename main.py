@@ -23,7 +23,7 @@ def game_loop(is_player1, board):
         else:
             bd.print_board(board)
             pos = bd.get_input(board)
-        print("Gotten past minimax")
+        # print("Gotten past minimax")
         bd.place_piece(board, pos, is_player1)
         moves_remaining = moves_remaining - 1
         is_won = bd.check_win(board, pos, is_player1)
