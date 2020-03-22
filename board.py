@@ -10,6 +10,7 @@ def print_board(board):
         for elmnt in r:
             print("| %s" % elmnt, end=" ")
         print()
+    print()
 
 # is_empty_cell(board, pos) is true if the tuple [pos] is an empty cell of
 # list, list [board], false otherwise.
@@ -34,8 +35,9 @@ def is_valid(board, pos):
 
 def get_input(board):
     loc = input("Input row as 'r_number,c_number': ")
-    loc_list = loc.split(',')
-    if len(loc_list) != 2:
+    new_loc = loc.replace(" ", "")
+    loc_list = new_loc.split(',')
+    if len(loc_list) != 2 or (loc_list[0] == '' or loc_list[1] == ''):
         print("Not a valid move, try again.")
         return get_input(board)
     r, c = int(loc_list[0]), int(loc_list[1])
@@ -55,12 +57,18 @@ def place_piece(board, move, is_player1):
     r, c = move[0], move[1]
     board[r][c] = piece
 
+# remove_piece(board, move) sets the cell specified at coordinates [move] on
+# the string list, list [board] to be ' '
+
 
 def remove_piece(board, move):
     r, c = move[0], move[1]
     board[r][c] = ' '
 
-# TODO: Document check_win
+# check_win(board, move, is_player1) returns True if the result of playing
+# a piece at coordinates [move] on string list, list [board] by player specified
+# by boolean [is_player1] is a win (3 of the same piece in a row) or False
+# otherwise
 
 
 def check_win(board, move, is_player1):
@@ -75,6 +83,9 @@ def check_win(board, move, is_player1):
     if (col == 3) or (row == 3) or (diag == 3) or (right_diag == 3):
         return True
     return False
+
+# possible_moves(board) returns a list of int tuples representing possible next
+# moves on string list, list [board]
 
 
 def possible_moves(board):
