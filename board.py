@@ -37,10 +37,11 @@ def get_input(board):
     loc = input("Input row as 'r_number,c_number': ")
     new_loc = loc.replace(" ", "")
     loc_list = new_loc.split(',')
-    if len(loc_list) != 2 or (loc_list[0] == '' or loc_list[1] == ''):
+    try:
+        r, c = int(loc_list[0]), int(loc_list[1])
+    except ValueError:
         print("Not a valid move, try again.")
         return get_input(board)
-    r, c = int(loc_list[0]), int(loc_list[1])
     pos = (r, c)
     if not (is_valid(board, pos)):
         print("Not a valid move, try again.")
