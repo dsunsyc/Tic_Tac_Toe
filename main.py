@@ -8,12 +8,34 @@ is_won = False
 is_tie = False
 moves_remaining = BOARD_WIDTH ** 2
 
+
+def get_players():
+    while True:
+        try:
+            num_players = int(input("1 or 2 players: "))
+            if num_players != 1 and num_players != 2:
+                raise ValueError
+            return num_players
+        except ValueError:
+            print("Invalid input. Try again.")
+
+
+def get_diff():
+    diff = input("Input difficulty (easy, medium, impossible): ")
+    if diff != "easy" and diff != "medium" and diff != "impossible":
+        print("Invalid input. Try again.")
+        return get_diff()
+    if diff == "easy":
+        return 100
+    elif diff == "medium":
+        return 50
+    else:
+        return 0
+
 # TODO: Document game_loop
 
-# haven't really accounted for edge cases
 
-
-def game_loop(is_player1, board):
+def game_loop(board, is_player1, use_bot, diff):
     global is_won, is_tie, moves_remaining
     while not (is_won or is_tie):
         print("Moves left: %d" % moves_remaining)
@@ -23,7 +45,6 @@ def game_loop(is_player1, board):
         else:
             bd.print_board(board)
             pos = bd.get_input(board)
-        # print("Gotten past minimax")
         bd.place_piece(board, pos, is_player1)
         moves_remaining = moves_remaining - 1
         is_won = bd.check_win(board, pos, is_player1)
@@ -41,7 +62,7 @@ def game_loop(is_player1, board):
 
 def main():
     is_p1 = True
-    game_loop(is_p1, game_board)
+    game_loop(game_board, is_p1, 1, 1)
 
 
 if __name__ == "__main__":
