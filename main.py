@@ -9,6 +9,13 @@ is_tie = False
 moves_remaining = BOARD_WIDTH ** 2
 
 
+def reset():
+    global game_board, is_won, is_tie, moves_remaining
+    game_board = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
+    is_won, is_tie = False, False
+    moves_remaining = 9
+
+
 def get_players():
     while True:
         try:
@@ -40,8 +47,8 @@ def game_loop(board, is_player1, use_bot, diff):
     while not (is_won or is_tie):
         print("Moves left: %d" % moves_remaining)
         pos = None
-        if not is_player1:
-            pos = minimax.best_move(board, False, moves_remaining)
+        if (not is_player1) and use_bot:
+            pos = minimax.best_move(board, False, diff, moves_remaining)
         else:
             bd.print_board(board)
             pos = bd.get_input(board)
@@ -60,9 +67,18 @@ def game_loop(board, is_player1, use_bot, diff):
         print("Player %d is the winner!" % player)
 
 
+# if input for number of players is 2, then shouldn't ask for difficulty
+
+
 def main():
+    use_bot = get_players() == 1
+    diff = get_diff() if use_bot else 0
     is_p1 = True
-    game_loop(game_board, is_p1, 1, 1)
+    game_loop(game_board, is_p1, use_bot, diff)
+    is_replay = input("Play again (y/n)?: ")
+    if is_replay == 'y':
+        reset()
+        main()
 
 
 if __name__ == "__main__":
