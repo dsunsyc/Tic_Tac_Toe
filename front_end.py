@@ -40,7 +40,7 @@ class Game(Tk):
         self.is_tie = False
 
         self.is_multi = False
-        self.diff = 0
+        self.diff = 100
 
         self.moves_remaining = 9
 
@@ -70,16 +70,64 @@ class Game(Tk):
 
         self.canvas.create_text(
             SQUARE_SIZE/2,
-            SQUARE_SIZE/3,
+            SQUARE_SIZE/4,
             text='TIC TAC TOE', fill='white',
             font=('Franklin Gothic', int(-SQUARE_SIZE/12), 'bold'))
 
         self.canvas.create_text(
             int(SQUARE_SIZE/2),
-            int(SQUARE_SIZE/2.5),
+            int(SQUARE_SIZE/3),
             text='[click to play]', fill='white',
             font=('Franklin Gothic', int(-SQUARE_SIZE/25)))
 
+        self.canvas.create_rectangle(
+            int(5*SQUARE_SIZE/40), int(SQUARE_SIZE*2/3),
+            int(9*SQUARE_SIZE/40), int(SQUARE_SIZE*23/30),
+            fill='white', activefill=X_COLOR, outline='')
+        self.canvas.create_rectangle(
+            int(10*SQUARE_SIZE/40), int(SQUARE_SIZE*2/3),
+            int(14*SQUARE_SIZE/40), int(SQUARE_SIZE*23/30),
+            fill='white', activefill=X_COLOR, outline='')
+        self.canvas.create_rectangle(
+            int(15*SQUARE_SIZE/40), int(SQUARE_SIZE*2/3),
+            int(19*SQUARE_SIZE/40), int(SQUARE_SIZE*23/30),
+            fill='white', activefill=X_COLOR, outline='')
+        self.canvas.create_rectangle(
+            int(26*SQUARE_SIZE/40), int(SQUARE_SIZE*2/3),
+            int(30*SQUARE_SIZE/40), int(SQUARE_SIZE*23/30),
+            fill='white', activefill=X_COLOR, outline='')
+
+        self.canvas.create_text(
+            int(7*SQUARE_SIZE/40), int(43*SQUARE_SIZE/60),
+            text='EASY', fill=X_COLOR,
+            font=('David', int(-SQUARE_SIZE/30))
+        )
+        self.canvas.create_text(
+            int(12*SQUARE_SIZE/40), int(43*SQUARE_SIZE/60),
+            text='MED.', fill=X_COLOR,
+            font=('David', int(-SQUARE_SIZE/30))
+        )
+        self.canvas.create_text(
+            int(17*SQUARE_SIZE/40), int(43*SQUARE_SIZE/60),
+            text='HARD', fill=X_COLOR,
+            font=('David', int(-SQUARE_SIZE/30))
+        )
+        self.canvas.create_text(
+            int(28*SQUARE_SIZE/40), int(43*SQUARE_SIZE/60),
+            text='PLAY', fill=X_COLOR,
+            font=('David', int(-SQUARE_SIZE/30))
+        )
+
+        self.canvas.create_text(
+            int(12*SQUARE_SIZE/40), int(35*SQUARE_SIZE/60),
+            text='1-Player', fill='white',
+            font=('Franklin Gothic', int(-SQUARE_SIZE/20))
+        )
+        self.canvas.create_text(
+            int(28*SQUARE_SIZE/40), int(35*SQUARE_SIZE/60),
+            text='2-Player', fill='white',
+            font=('Franklin Gothic', int(-SQUARE_SIZE/20))
+        )
         # b_diff = Button(self.canvas, text='Diff_Test', bg='white',
         #                 activebackground='dodger blue',
         #                 command=lambda: b_diff.destroy())
@@ -143,6 +191,21 @@ class Game(Tk):
         y = SQUARE_SIZE - 1 if pix[1] >= SQUARE_SIZE else pix[1]
         return (int(y/CELL_SIZE), int(x/CELL_SIZE))
 
+    def pix_to_button(self, pix):
+        x = SQUARE_SIZE - 1 if pix[0] >= SQUARE_SIZE else pix[0]
+        y = SQUARE_SIZE - 1 if pix[1] >= SQUARE_SIZE else pix[1]
+        btn = None
+        if (int(2*SQUARE_SIZE/3) <= y and y <= int(23*SQUARE_SIZE/30)):
+            if (int(5*SQUARE_SIZE/40) <= x and x <= int(9*SQUARE_SIZE/40)):
+                btn = 0
+            elif (int(10*SQUARE_SIZE/40) <= x and x <= int(14*SQUARE_SIZE/40)):
+                btn = 1
+            elif (int(15*SQUARE_SIZE/40) <= x and x <= int(19*SQUARE_SIZE/40)):
+                btn = 2
+            elif (int(26*SQUARE_SIZE/40) <= x and x <= int(30*SQUARE_SIZE/40)):
+                btn = 3
+        return btn
+
     def draw_X(self, cell):
         """
         draw the X symbol at x, y in the grid
@@ -193,24 +256,35 @@ class Game(Tk):
             self.draw_O(cell)
 
     def on_click(self, event):
-        # TODO:
-        c, r = self.pix_to_cell((event.x, event.y))
+        x, y = event.x, event.y
+        c, r = self.pix_to_cell((x, y))
         if self.gamestate == END_STATE:
             self.reset()
             self.gamestate = MENU_STATE
             self.title_screen()
         elif self.gamestate == MENU_STATE:
-            self.reset()
-            self.first_isX = not self.first_isX
-            self.gamestate = X_TURN_STATE if self.first_isX else O_TURN_STATE
+            btn = self.pix_to_button((x, y))
+            if btn != None:
+                self.reset()
+                self.first_isX = not self.first_isX
+                self.gamestate = X_TURN_STATE if self.first_isX else O_TURN_STATE
+                if btn == 0:
+                    self.is_multi = False
+                    self.diff = 100
+                elif btn == 1:
+                    self.is_multi = False
+                    self.diff = 50
+                elif btn == 2:
+                    self.is_multi = False
+                    self.diff = 0
+                elif btn == 3:
+                    self.is_multi = True
         elif ((self.gamestate == X_TURN_STATE or
                self.gamestate == O_TURN_STATE) and
               board.is_valid(self.game_board, (r, c))):
             cur_player = 1 if self.gamestate == X_TURN_STATE else 0
-            # self.new_move(cur_player, (r, c))
             self.new_move((r, c))
             self.moves_remaining -= 1
-            # if self.has_won(cur_player, (r, c)):
             if self.has_won((r, c)):
                 self.is_won = True
                 self.gamestate = END_STATE
