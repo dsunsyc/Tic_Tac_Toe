@@ -44,12 +44,6 @@ class Game(Tk):
 
         self.moves_remaining = 9
 
-    # def two_player(self):
-    #     self.reset()
-    #     # self.first_isX = not self.first_isX
-    #     self.gamestate = X_TURN_STATE  # if self.first_isX else O_TURN_STATE
-    #     self.is_multi = True
-
     def title_screen(self):
         # TODO:
         self.canvas.delete('all')  # clears board
@@ -128,19 +122,6 @@ class Game(Tk):
             text='2-Player', fill='white',
             font=('Franklin Gothic', int(-SQUARE_SIZE/20))
         )
-        # b_diff = Button(self.canvas, text='Diff_Test', bg='white',
-        #                 activebackground='dodger blue',
-        #                 command=lambda: b_diff.destroy())
-        # b_diff.place(relx=.25, rely=.45, relwidth=.5, relheight=.3)
-
-        # b_p1 = Button(self.canvas, text='1 Player', bg='white',
-        #               activebackground='dodger blue',
-        #               command=lambda: b_p1.destroy())
-        # b_p2 = Button(self.canvas, text='2 Players',
-        #               bg='white', activebackground="tomato",
-        #               command=self.two_player())
-        # b_p1.place(relx=.25, rely=.45, relwidth=.25, relheight=.3)
-        # b_p2.place(relx=.5, rely=.45, relwidth=.25, relheight=.3)
 
     def reset(self):
         self.canvas.delete('all')
@@ -283,89 +264,38 @@ class Game(Tk):
                self.gamestate == O_TURN_STATE) and
               board.is_valid(self.game_board, (r, c))):
             cur_player = 1 if self.gamestate == X_TURN_STATE else 0
-            if not (self.is_multi or cur_player == 1):
-                (r, c) = minimax.best_move(self.game_board, False, self.diff,
+            # if not (self.is_multi or cur_player == 1):
+            #     (r, c) = minimax.best_move(self.game_board, False, self.diff,
+            #                                self.moves_remaining)
+            if (self.is_multi or cur_player == 1):
+                self.new_move((r, c))
+                self.moves_remaining -= 1
+                if self.has_won((r, c)):
+                    self.is_won = True
+                    self.gamestate = END_STATE
+                    self.game_over_screen(cur_player+1)
+                elif self.has_tie():
+                    self.gamestate = END_STATE
+                    self.game_over_screen(0)
+                else:
+                    self.gamestate = int(not (self.gamestate - 1)) + 1
+            if not self.is_multi and self.moves_remaining > 0:
+                r1, c1 = minimax.best_move(self.game_board, False, self.diff,
                                            self.moves_remaining)
-            self.new_move((r, c))
-            self.moves_remaining -= 1
-            if self.has_won((r, c)):
-                self.is_won = True
-                self.gamestate = END_STATE
-                self.game_over_screen(cur_player+1)
-            elif self.has_tie():
-                self.gamestate = END_STATE
-                self.game_over_screen(0)
-            else:
-                self.gamestate = int(not (self.gamestate - 1)) + 1
+                self.new_move((r1, c1))
+                self.moves_remaining -= 1
+                if self.has_won((r1, c1)):
+                    self.is_won = True
+                    self.gamestate = END_STATE
+                    self.game_over_screen(1)
+                elif self.has_tie():
+                    self.gamestate = END_STATE
+                    self.game_over_screen(0)
+                else:
+                    self.gamestate = int(not (self.gamestate - 1)) + 1
 
     def quit(self, event):
         self.destroy()
-
-
-# def raise_frame(frame):
-#     frame.tkraise()
-
-
-# def get_pos(event):
-#     x, y = event.x, event.y
-#     r, c = int(event.x/3), int(event.y/3)
-#     print("clicked at", r, c)
-#     return (r, c)
-
-
-# def nextMove(event):
-#     if not (is_won or is_tie):
-#         mv = get_pos(event)
-#         print("hi")
-
-
-# def start_game(event, is_p1, use_bot):
-#     raise_frame(event)
-#     nextMove(event)
-
-
-# root = Tk()
-
-# root.title("Tic-Tac-Toe")
-
-# canvas = Canvas(root, height=HEIGHT, width=WIDTH)
-# canvas.pack()
-
-
-# f1 = Frame(root, bg=BACKGROUND)
-# f2 = Frame(root, bg=BACKGROUND)
-
-# f1.place(relwidth=1, relheight=1)
-# f2.place(relwidth=1, relheight=1)
-
-# c1 = Canvas(f2, height=HEIGHT, width=WIDTH)
-# c1.pack()
-# c1.create_line(WIDTH/3, 0, WIDTH/3, SQUARE_HEIGHT, width=4)
-# c1.create_line(2*WIDTH/3, 0, 2*WIDTH/3, SQUARE_HEIGHT, width=4)
-# c1.create_line(0, SQUARE_HEIGHT/3, WIDTH, SQUARE_HEIGHT/3, width=4)
-# c1.create_line(0, 2*SQUARE_HEIGHT/3, WIDTH, 2*SQUARE_HEIGHT/3, width=4)
-
-# c1.bind("<Button-1>", get_pos)
-# c1.pack()
-
-
-# l_intro = Label(f1, text='Welcome to Tic-Tac-Toe!', font=FONT)
-# b_p1 = Button(f1, text='1 Player', command=lambda: raise_frame(f2))
-# # start game with two players
-# b_p2 = Button(f1, text='2 Players', command=lambda: start_game(f2, True, True))
-# l_intro.place(relx=.25, rely=.2, relwidth=.5, relheight=.2)
-# b_p1.place(relx=.25, rely=.45, relwidth=.25, relheight=.2)
-# b_p2.place(relx=.5, rely=.45, relwidth=.25, relheight=.2)
-
-# Label(f2, text='FRAME 2').place(relx=.3, rely=.9)
-# Button(f2, text='Go to frame 1', command=lambda: raise_frame(
-#     f1)).place(relx=.5, rely=.9)
-
-# Label(f3, text='FRAME 3').pack()
-# Button(f3, text='Go to frame 1', command=lambda: raise_frame(f1)).pack()
-
-# raise_frame(f1)
-# root.mainloop()
 
 
 def main():
