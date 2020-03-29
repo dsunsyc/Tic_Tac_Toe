@@ -283,6 +283,9 @@ class Game(Tk):
                self.gamestate == O_TURN_STATE) and
               board.is_valid(self.game_board, (r, c))):
             cur_player = 1 if self.gamestate == X_TURN_STATE else 0
+            if not (self.is_multi or cur_player == 1):
+                (r, c) = minimax.best_move(self.game_board, False, self.diff,
+                                           self.moves_remaining)
             self.new_move((r, c))
             self.moves_remaining -= 1
             if self.has_won((r, c)):
