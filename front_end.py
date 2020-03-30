@@ -165,8 +165,6 @@ class Game(Tk):
         y, x = r*CELL_SIZE + (CELL_SIZE/2), c*CELL_SIZE + (CELL_SIZE/2)
         return (y, x)
 
-    # TODO: BE CAREFUL FOR THE TRANSLATION FROM COORDINATES TO BOARD LOCATION
-    #       COORD (1,2) MEANS X = 1, Y = 2, WHICH BECOMES LOCATION [2][1]
     def pix_to_cell(self, pix):
         x = SQUARE_SIZE - 1 if pix[0] >= SQUARE_SIZE else pix[0]
         y = SQUARE_SIZE - 1 if pix[1] >= SQUARE_SIZE else pix[1]
@@ -188,10 +186,6 @@ class Game(Tk):
         return btn
 
     def draw_X(self, cell):
-        """
-        draw the X symbol at x, y in the grid
-        """
-
         x, y = self.cell_to_pix(cell)
         delta = CELL_SIZE/2*SYMBOL_SIZE
 
@@ -206,10 +200,6 @@ class Game(Tk):
             width=SYMBOL_WIDTH, fill=X_COLOR)
 
     def draw_O(self, cell):
-        """
-        draw an O symbol at x, y in the grid
-        note : a big outline value appears to cause a visual glitch in tkinter
-        """
         x, y = self.cell_to_pix(cell)
         delta = 1.5*CELL_SIZE/2*SYMBOL_SIZE
         self.canvas.create_oval(
@@ -264,9 +254,6 @@ class Game(Tk):
                self.gamestate == O_TURN_STATE) and
               board.is_valid(self.game_board, (r, c))):
             cur_player = 1 if self.gamestate == X_TURN_STATE else 0
-            # if not (self.is_multi or cur_player == 1):
-            #     (r, c) = minimax.best_move(self.game_board, False, self.diff,
-            #                                self.moves_remaining)
             if (self.is_multi or cur_player == 1):
                 self.new_move((r, c))
                 self.moves_remaining -= 1
